@@ -1,0 +1,152 @@
+.memory-section {
+  padding: 65px 8%;
+  background: #11111d;
+  border-top: 1px solid #302741;
+  border-bottom: 1px solid #302741;
+}
+
+.memory-heading {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.memory-heading h2 {
+  color: white;
+  font-size: 32px;
+  margin: 12px 0;
+}
+
+.memory-heading > p:last-child {
+  color: #aaa2bb;
+  font-size: 14px;
+}
+
+.memory-stats {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.memory-stat {
+  min-width: 110px;
+  padding: 15px;
+  text-align: center;
+  background: #191726;
+  border: 1px solid #49375f;
+  border-radius: 8px;
+}
+
+.memory-stat span,
+.memory-stat strong,
+.memory-stat small {
+  display: block;
+}
+
+.memory-stat span {
+  font-size: 20px;
+}
+
+.memory-stat strong {
+  color: #c49aff;
+  font-size: 22px;
+  margin: 6px 0;
+}
+
+.memory-stat small {
+  color: #aaa2bb;
+  font-size: 11px;
+}
+
+.memory-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 100px));
+  justify-content: center;
+  gap: 12px;
+}
+
+.memory-card {
+  aspect-ratio: 1;
+  background: #241b35;
+  border: 1px solid #a66aff;
+  border-radius: 9px;
+  color: white;
+  font-size: 32px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.memory-card:hover:not(:disabled) {
+  background: #493064;
+  transform: translateY(-3px);
+}
+
+.memory-card.flipped {
+  background: #39234f;
+}
+
+.memory-card.matched {
+  background: #173d35;
+  border-color: #37d6a0;
+  cursor: default;
+}
+
+.memory-win {
+  text-align: center;
+  margin: 30px 0;
+  padding: 20px;
+  background: #173d35;
+  border: 1px solid #37d6a0;
+  border-radius: 8px;
+}
+
+.memory-win h3 {
+  color: #37d6a0;
+  font-size: 25px;
+}
+
+.memory-win p {
+  color: white;
+  margin-top: 10px;
+}
+
+.memory-restart {
+  display: block;
+  margin: 30px auto 0;
+  padding: 13px 25px;
+  background: #a66aff;
+  color: #110b1c;
+  border: none;
+  border-radius: 5px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.memory-restart:hover {
+  background: #c49aff;
+}
+
+@media (max-width: 500px) {
+  .memory-section {
+    padding: 45px 5%;
+  }
+
+  .memory-grid {
+    gap: 8px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .memory-card {
+    font-size: 25px;
+  }
+
+  .memory-stats {
+    gap: 8px;
+  }
+
+  .memory-stat {
+    min-width: 0;
+    flex: 1;
+    padding: 10px 5px;
+  }
+}

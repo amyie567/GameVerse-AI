@@ -1,0 +1,121 @@
+.reaction-section {
+  padding: 65px 8%;
+  background: #171321;
+  border-bottom: 1px solid #302741;
+  text-align: center;
+}
+
+.reaction-heading h2 {
+  color: white;
+  font-size: 32px;
+  margin: 12px 0;
+}
+
+.reaction-heading > p:last-child {
+  color: #aaa2bb;
+  font-size: 14px;
+}
+
+.reaction-stats {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.reaction-stat {
+  min-width: 140px;
+  padding: 15px;
+  background: #211b30;
+  border: 1px solid #49375f;
+  border-radius: 8px;
+}
+
+.reaction-stat strong,
+.reaction-stat small {
+  display: block;
+}
+
+.reaction-stat strong {
+  color: #c49aff;
+  font-size: 22px;
+}
+
+.reaction-stat small {
+  color: #aaa2bb;
+  margin-top: 7px;
+}
+
+.reaction-box {
+  width: 100%;
+  max-width: 500px;
+  height: 200px;
+  border: 2px solid #a66aff;
+  border-radius: 12px;
+  background: #302044;
+  color: white;
+  font-size: 32px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.reaction-box.ready {
+  background: #a13b42;
+  border-color: #ff737d;
+}
+
+.reaction-box.go {
+  background: #167c50;
+  border-color: #37d6a0;
+}
+
+.reaction-box.finished {
+  background: #39234f;
+}
+
+.reaction-message {
+  color: #c49aff;
+  margin: 20px 0;
+  font-size: 16px;
+}
+
+.reaction-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.reaction-actions button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 5px;
+  background: #a66aff;
+  color: #110b1c;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.reaction-actions button:hover {
+  background: #c49aff;
+}
+
+@media (max-width: 500px) {
+  .reaction-section {
+    padding: 45px 5%;
+  }
+
+  .reaction-box {
+    height: 160px;
+    font-size: 25px;
+  }
+
+  .reaction-stats {
+    gap: 10px;
+  }
+
+  .reaction-stat {
+    min-width: 0;
+    flex: 1;
+  }
+}

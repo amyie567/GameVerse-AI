@@ -1,0 +1,25 @@
+# Environment variables
+.env
+.env.*
+!.env.example
+backend/.env
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+dist/
+
+# Local backup files
+*_backup.py
+*_day30_backup.py
+*_day32_backup.py
