@@ -1,7 +1,7 @@
 import os
-from dotenv import load_dotenv
 
 import psycopg
+from dotenv import load_dotenv
 from psycopg.types.json import Jsonb
 
 # Load environment variables from .env
@@ -22,30 +22,28 @@ def get_db_connection():
 
 
 def save_recommendation_history(genre, difficulty, play_style, recommendations):
-    with get_db_connection() as connection:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                """
+    with get_db_connection() as connection, connection.cursor() as cursor:
+        cursor.execute(
+            """
                 INSERT INTO recommendation_history
                 (genre, difficulty, play_style, recommendations)
                 VALUES (%s, %s, %s, %s)
                 """,
-                (genre, difficulty, play_style, Jsonb(recommendations)),
-            )
+            (genre, difficulty, play_style, Jsonb(recommendations)),
+        )
 
 
 def fetch_recommendation_history():
-    with get_db_connection() as connection:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                """
+    with get_db_connection() as connection, connection.cursor() as cursor:
+        cursor.execute(
+            """
                 SELECT id, genre, difficulty, play_style,
                        recommendations, created_at
                 FROM recommendation_history
                 ORDER BY created_at DESC, id DESC
                 """
-            )
-            rows = cursor.fetchall()
+        )
+        rows = cursor.fetchall()
 
     history = []
 
@@ -65,23 +63,21 @@ def fetch_recommendation_history():
 
 
 def save_player_profile(username, favorite_genre, achievements, points):
-    with get_db_connection() as connection:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                """
+    with get_db_connection() as connection, connection.cursor() as cursor:
+        cursor.execute(
+            """
                 INSERT INTO player_profile
                 (username, favorite_genre, achievements, points)
                 VALUES (%s, %s, %s, %s)
                 """,
-                (username, favorite_genre, Jsonb(achievements), points),
-            )
+            (username, favorite_genre, Jsonb(achievements), points),
+        )
 
 
 def fetch_player_profile():
-    with get_db_connection() as connection:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                """
+    with get_db_connection() as connection, connection.cursor() as cursor:
+        cursor.execute(
+            """
                 SELECT id, username, favorite_genre,
                        achievements, points, mini_game_points,
                        preferred_difficulty, preferred_play_style
@@ -89,9 +85,9 @@ def fetch_player_profile():
                 ORDER BY id ASC
                 LIMIT 1
                 """
-            )
+        )
 
-            row = cursor.fetchone()
+        row = cursor.fetchone()
 
     if row is None:
         return None
@@ -111,10 +107,9 @@ def fetch_player_profile():
 def update_player_profile(
     username, favorite_genre, preferred_difficulty, preferred_play_style
 ):
-    with get_db_connection() as connection:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                """
+    with get_db_connection() as connection, connection.cursor() as cursor:
+        cursor.execute(
+            """
                 UPDATE player_profile
                 SET username = %s,
                     favorite_genre = %s,
@@ -127,42 +122,41 @@ def update_player_profile(
                     LIMIT 1
                 )
                 """,
-                (username, favorite_genre, preferred_difficulty, preferred_play_style),
-            )
+            (username, favorite_genre, preferred_difficulty, preferred_play_style),
+        )
 
 
 def unlock_player_achievement(achievement_name, description, icon, points_to_add):
-    with get_db_connection() as connection:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                """
+    with get_db_connection() as connection, connection.cursor() as cursor:
+        cursor.execute(
+            """
                 SELECT achievements
                 FROM player_profile
                 ORDER BY id ASC
                 LIMIT 1
                 """
-            )
+        )
 
-            row = cursor.fetchone()
+        row = cursor.fetchone()
 
-            if row is None:
-                return None, False
+        if row is None:
+            return None, False
 
-            achievements = row[0] or []
+        achievements = row[0] or []
 
-            already_unlocked = any(
-                item["name"] == achievement_name for item in achievements
-            )
+        already_unlocked = any(
+            item["name"] == achievement_name for item in achievements
+        )
 
-            if already_unlocked:
-                return achievements, False
+        if already_unlocked:
+            return achievements, False
 
-            achievements.append(
-                {"name": achievement_name, "description": description, "icon": icon}
-            )
+        achievements.append(
+            {"name": achievement_name, "description": description, "icon": icon}
+        )
 
-            cursor.execute(
-                """
+        cursor.execute(
+            """
                 UPDATE player_profile
                 SET achievements = %s,
                     points = points + %s
@@ -173,17 +167,16 @@ def unlock_player_achievement(achievement_name, description, icon, points_to_add
                     LIMIT 1
                 )
                 """,
-                (Jsonb(achievements), points_to_add),
-            )
+            (Jsonb(achievements), points_to_add),
+        )
 
-            return achievements, True
+        return achievements, True
 
 
 def add_mini_game_points(points_to_add):
-    with get_db_connection() as connection:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                """
+    with get_db_connection() as connection, connection.cursor() as cursor:
+        cursor.execute(
+            """
                 UPDATE player_profile
                 SET mini_game_points = mini_game_points + %s,
                     points = points + %s
@@ -195,72 +188,68 @@ def add_mini_game_points(points_to_add):
                 )
                 RETURNING id
                 """,
-                (points_to_add, points_to_add),
-            )
+            (points_to_add, points_to_add),
+        )
 
-            return cursor.fetchone()
+        return cursor.fetchone()
 
 
 def save_leaderboard_score(username, points):
-    with get_db_connection() as connection:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                """
+    with get_db_connection() as connection, connection.cursor() as cursor:
+        cursor.execute(
+            """
                 INSERT INTO leaderboard (username, points)
                 VALUES (%s, %s)
                 ON CONFLICT (username)
                 DO UPDATE SET
                     points = EXCLUDED.points
                 """,
-                (username, points),
-            )
+            (username, points),
+        )
 
 
 def fetch_leaderboard():
-    with get_db_connection() as connection:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                """
+    with get_db_connection() as connection, connection.cursor() as cursor:
+        cursor.execute(
+            """
                 SELECT username, MAX(points) AS points
                 FROM leaderboard
                 GROUP BY username
                 ORDER BY points DESC
                 LIMIT 10
                 """
-            )
+        )
 
-            rows = cursor.fetchall()
+        rows = cursor.fetchall()
 
     return [{"username": row[0], "points": row[1]} for row in rows]
 
 
 def save_chat_message(username, user_message, assistant_response):
-    with get_db_connection() as connection:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                """
+    with get_db_connection() as connection, connection.cursor() as cursor:
+        cursor.execute(
+            """
                 INSERT INTO chat_history
                 (username, user_message, assistant_response)
                 VALUES (%s, %s, %s)
                 """,
-                (username, user_message, assistant_response),
-            )
+            (username, user_message, assistant_response),
+        )
 
 
 def fetch_chat_history(username):
-    with get_db_connection() as connection:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                """
+    with get_db_connection() as connection, connection.cursor() as cursor:
+        cursor.execute(
+            """
                 SELECT id, user_message, assistant_response, created_at
                 FROM chat_history
                 WHERE username = %s
                 ORDER BY created_at DESC, id DESC
                 LIMIT 50
                 """,
-                (username,),
-            )
-            rows = cursor.fetchall()
+            (username,),
+        )
+        rows = cursor.fetchall()
 
     return [
         {

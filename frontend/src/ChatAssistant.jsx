@@ -33,7 +33,7 @@ function ChatAssistant() {
         });
 
         setChatHistory(savedMessages);
-      } catch (error) {
+      } catch {
         console.error("Chat history loading error:", error);
 
         setChatHistory([
@@ -84,7 +84,7 @@ function ChatAssistant() {
         ...previous,
         { sender: "bot", text: data.reply },
       ]);
-    } catch (error) {
+    } catch {
       setChatHistory((previous) => [
         ...previous,
         {

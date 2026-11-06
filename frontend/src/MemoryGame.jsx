@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./MemoryGame.css";
 
 const SYMBOLS = ["🎮", "🚀", "⚡", "👾", "🏆", "🎯", "🔥", "💎"];
@@ -22,8 +22,11 @@ function MemoryGame() {
   const [locked, setLocked] = useState(false);
 
   const gameWon = cards.every((card) => card.matched);
-  const [pointsAwarded, setPointsAwarded] = useState(false);
 
+  // Remember whether points have already been awarded.
+  const pointsAwardedRef = useRef(false);
+
+  // Game timer
   useEffect(() => {
     if (!started || gameWon) return;
 
@@ -33,10 +36,12 @@ function MemoryGame() {
 
     return () => clearInterval(timer);
   }, [started, gameWon]);
-  useEffect(() => {
-    if (!gameWon || pointsAwarded) return;
 
-    setPointsAwarded(true);
+  // Award 100 points only once when the game is completed.
+  useEffect(() => {
+    if (!gameWon || pointsAwardedRef.current) return;
+
+    pointsAwardedRef.current = true;
 
     fetch("http://127.0.0.1:8000/api/profile/mini-game-points", {
       method: "POST",
@@ -54,7 +59,7 @@ function MemoryGame() {
       .catch((error) => {
         console.error("Points update failed:", error);
       });
-  }, [gameWon, pointsAwarded]);
+  }, [gameWon]);
 
   function flipCard(card) {
     if (locked || card.matched || flipped.includes(card.id)) {
@@ -100,7 +105,9 @@ function MemoryGame() {
     setSeconds(0);
     setStarted(false);
     setLocked(false);
-    setPointsAwarded(false);
+
+    // Allow points to be awarded in the next completed game.
+    pointsAwardedRef.current = false;
   }
 
   const minutes = Math.floor(seconds / 60);

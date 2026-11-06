@@ -11,28 +11,40 @@ function PlayerProfile() {
   const [error, setError] = useState("");
 
   // Load saved profile from Python backend
-  async function loadProfile() {
-    try {
-      setError("");
-      const response = await fetch(`${API}/api/profile`);
-
-      if (!response.ok) {
-        throw new Error("Unable to load profile");
-      }
-
-      const data = await response.json();
-
-      setProfile(data);
-      setNewUsername(data.username);
-    } catch (err) {
-      setError("Could not connect to the profile server.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
   useEffect(() => {
-    loadProfile();
+    let cancelled = false;
+
+    async function fetchProfile() {
+      try {
+        const response = await fetch(`${API}/api/profile`);
+
+        if (!response.ok) {
+          throw new Error("Unable to load profile");
+        }
+
+        const data = await response.json();
+
+        if (!cancelled) {
+          setProfile(data);
+          setNewUsername(data.username);
+          setError("");
+        }
+      } catch {
+        if (!cancelled) {
+          setError("Could not connect to the profile server.");
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    fetchProfile();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Update profile through backend
@@ -66,7 +78,7 @@ function PlayerProfile() {
       setProfile(data.profile);
       setNewUsername(data.profile.username);
       setMessage(data.message);
-    } catch (err) {
+    } catch {
       setMessage("Unable to update profile. Try again.");
     }
   }
@@ -92,7 +104,7 @@ function PlayerProfile() {
       const data = await response.json();
       setProfile(data.profile);
       setMessage(data.message);
-    } catch (err) {
+    } catch {
       setMessage("Unable to update genre.");
     }
   }
@@ -112,7 +124,7 @@ function PlayerProfile() {
 
       setProfile(data.profile);
       setMessage(data.message);
-    } catch (err) {
+    } catch {
       setMessage("Unable to unlock achievement.");
     }
   }

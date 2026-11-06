@@ -1,8 +1,8 @@
 import re
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -34,6 +34,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",
         "http://localhost:5175",
+        "http://localhost:4173",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -146,16 +147,16 @@ RECOMMENDATION_HISTORY = []
 
 # Player preference model
 class PlayerPreferences(BaseModel):
-    genre: str = "Any"
-    difficulty: str = "Any"
-    play_style: str = "Any"
+    genre: str = Field(default="Any", min_length=1, max_length=50)
+    difficulty: str = Field(default="Any", min_length=1, max_length=50)
+    play_style: str = Field(default="Any", min_length=1, max_length=50)
 
 
 class PlayerProfileUpdate(BaseModel):
-    username: str
-    favorite_genre: str
-    preferred_difficulty: str = "Any"
-    preferred_play_style: str = "Any"
+    username: str = Field(min_length=3, max_length=30)
+    favorite_genre: str = Field(min_length=1, max_length=50)
+    preferred_difficulty: str = Field(default="Any", min_length=1, max_length=50)
+    preferred_play_style: str = Field(default="Any", min_length=1, max_length=50)
 
 
 @app.get("/")
@@ -245,106 +246,209 @@ def recommend_games(preferences: PlayerPreferences):
 # Get player profile from PostgreSQL
 @app.get("/api/profile")
 def get_profile():
-    profile = fetch_player_profile()
-
-    if profile is None:
-        save_player_profile(
-            username=PLAYER_PROFILE["username"],
-            favorite_genre=PLAYER_PROFILE["favorite_genre"],
-            achievements=PLAYER_PROFILE["achievements"],
-            points=PLAYER_PROFILE.get("points", 0),
-        )
-
+    try:
         profile = fetch_player_profile()
 
-    return profile
+        if profile is None:
+            save_player_profile(
+                username=PLAYER_PROFILE["username"],
+                favorite_genre=PLAYER_PROFILE["favorite_genre"],
+                achievements=PLAYER_PROFILE["achievements"],
+                points=PLAYER_PROFILE.get("points", 0),
+            )
+
+            profile = fetch_player_profile()
+
+        if profile is None:
+            raise HTTPException(
+                status_code=500,
+                detail="Unable to create or retrieve player profile.",
+            )
+
+        return profile
+
+    except HTTPException:
+        raise
+
+    except Exception:  # noqa: BLE001
+        raise HTTPException(
+            status_code=500,
+            detail="Database error while retrieving player profile.",
+        )
 
 
 # Update player profile in PostgreSQL
 @app.put("/api/profile")
 def update_profile(profile: PlayerProfileUpdate):
-    current_profile = fetch_player_profile()
+    try:
+        current_profile = fetch_player_profile()
 
-    if current_profile is None:
-        save_player_profile(
-            username=profile.username,
-            favorite_genre=profile.favorite_genre,
-            achievements=PLAYER_PROFILE["achievements"],
-            points=PLAYER_PROFILE["points"],
+        if current_profile is None:
+            save_player_profile(
+                username=profile.username,
+                favorite_genre=profile.favorite_genre,
+                achievements=PLAYER_PROFILE["achievements"],
+                points=PLAYER_PROFILE["points"],
+            )
+        else:
+            update_player_profile(
+                username=profile.username,
+                favorite_genre=profile.favorite_genre,
+                preferred_difficulty=profile.preferred_difficulty,
+                preferred_play_style=profile.preferred_play_style,
+            )
+
+        updated_profile = fetch_player_profile()
+
+        if updated_profile is None:
+            raise HTTPException(
+                status_code=500,
+                detail="Unable to retrieve updated player profile.",
+            )
+
+        return {
+            "message": "Profile updated successfully!",
+            "profile": updated_profile,
+        }
+
+    except HTTPException:
+        raise
+
+    except Exception:  # noqa: BLE001
+        raise HTTPException(
+            status_code=500,
+            detail="Database error while updating player profile.",
         )
-    else:
-        update_player_profile(
-            username=profile.username,
-            favorite_genre=profile.favorite_genre,
-            preferred_difficulty=profile.preferred_difficulty,
-            preferred_play_style=profile.preferred_play_style,
-        )
-
-    updated_profile = fetch_player_profile()
-
-    return {"message": "Profile updated successfully!", "profile": updated_profile}
 
 
 # Unlock an achievement and save it in PostgreSQL
 @app.post("/api/profile/achievement")
 def unlock_achievement():
-    achievement_name = "Gaming Champion"
+    try:
+        achievement_name = "Gaming Champion"
 
-    achievements, unlocked = unlock_player_achievement(
-        achievement_name=achievement_name,
-        description="Unlocked a new achievement",
-        icon="🏆",
-        points_to_add=500,
-    )
+        achievements, unlocked = unlock_player_achievement(
+            achievement_name=achievement_name,
+            description="Unlocked a new achievement",
+            icon="🏆",
+            points_to_add=500,
+        )
 
-    if achievements is None:
-        return {"message": "Player profile not found.", "profile": None}
+        if achievements is None:
+            return {
+                "message": "Player profile not found.",
+                "profile": None,
+            }
 
-    updated_profile = fetch_player_profile()
+        updated_profile = fetch_player_profile()
 
-    if not unlocked:
-        return {"message": "Achievement already unlocked!", "profile": updated_profile}
+        if updated_profile is None:
+            raise HTTPException(
+                status_code=500,
+                detail="Unable to retrieve updated player profile.",
+            )
 
-    return {"message": "Achievement unlocked! +500 points", "profile": updated_profile}
+        if not unlocked:
+            return {
+                "message": "Achievement already unlocked!",
+                "profile": updated_profile,
+            }
+
+        return {
+            "message": "Achievement unlocked! +500 points",
+            "profile": updated_profile,
+        }
+
+    except HTTPException:
+        raise
+
+    except Exception:  # noqa: BLE001
+        raise HTTPException(
+            status_code=500,
+            detail="Database error while unlocking achievement.",
+        )
 
 
 class MiniGamePoints(BaseModel):
-    points: int
+    points: int = Field(gt=0, le=1000)
 
 
 # Add mini-game points and save them in PostgreSQL
 @app.post("/api/profile/mini-game-points")
 def add_mini_game_points(data: MiniGamePoints):
-    if data.points <= 0 or data.points > 1000:
-        return {"message": "Invalid points value!"}
+    try:
+        if data.points <= 0 or data.points > 1000:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid points value!",
+            )
 
-    result = add_mini_game_points_to_database(data.points)
+        result = add_mini_game_points_to_database(data.points)
 
-    if result is None:
-        return {"message": "Player profile not found!"}
+        if result is None:
+            raise HTTPException(
+                status_code=404,
+                detail="Player profile not found!",
+            )
 
-    updated_profile = fetch_player_profile()
+        updated_profile = fetch_player_profile()
 
-    return {
-        "message": "Mini-game points added successfully!",
-        "profile": updated_profile,
-    }
+        if updated_profile is None:
+            raise HTTPException(
+                status_code=500,
+                detail="Unable to retrieve updated player profile.",
+            )
+
+        return {
+            "message": "Mini-game points added successfully!",
+            "profile": updated_profile,
+        }
+
+    except HTTPException:
+        raise
+
+    except Exception:  # noqa: BLE001
+        raise HTTPException(
+            status_code=500,
+            detail="Database error while adding mini-game points.",
+        )
 
 
 # Get leaderboard from PostgreSQL
 @app.get("/api/leaderboard")
 def get_leaderboard():
-    profile = fetch_player_profile()
+    try:
+        profile = fetch_player_profile()
 
-    if profile is not None:
-        save_leaderboard_score(profile["username"], profile["points"])
+        if profile is not None:
+            save_leaderboard_score(
+                profile["username"],
+                profile["points"],
+            )
 
-    return fetch_leaderboard()
+        leaderboard = fetch_leaderboard()
+
+        if leaderboard is None:
+            raise HTTPException(
+                status_code=500,
+                detail="Unable to retrieve leaderboard.",
+            )
+
+        return leaderboard
+
+    except HTTPException:
+        raise
+
+    except Exception:  # noqa: BLE001
+        raise HTTPException(
+            status_code=500,
+            detail="Database error while retrieving leaderboard.",
+        )
 
 
 # api chat code start here
 class ChatMessage(BaseModel):
-    message: str
+    message: str = Field(min_length=1, max_length=2000)
 
 
 def detect_chat_intent(message):
@@ -355,21 +459,25 @@ def detect_chat_intent(message):
         return "explain"
 
     # 2. Gaming tips intent
-    # Check before genre because "strategy tips"
-    # should be treated as a tips request.
     if re.search(
-        r"\b(tip|tips|advice|strategy|improve|"
+        r"\b(tip|tips|advice|improve|"
         r"improvement|skill|guide|guidance)\b",
         message,
     ):
         return "tips"
 
     # 3. Specific game genre intent
-    if re.search(r"\b(racing|adventure|strategy|action|exploration)\b", message):
+    if re.search(
+        r"\b(racing|adventure|strategy|action|exploration)\b",
+        message,
+    ):
         return "genre"
 
     # 4. Difficulty intent
-    if re.search(r"\b(easy|medium|hard|challenging|difficult)\b", message):
+    if re.search(
+        r"\b(easy|medium|hard|challenging|difficult)\b",
+        message,
+    ):
         return "difficulty"
 
     # 5. Recommendation intent
@@ -390,7 +498,10 @@ def detect_chat_intent(message):
         return "competitive"
 
     # 7. Greeting intent
-    if re.search(r"^(hello|hi|hey|good morning|good evening)\b", message):
+    if re.search(
+        r"^(hello|hi|hey|good morning|good evening)\b",
+        message,
+    ):
         return "greeting"
 
     return "general"
@@ -432,6 +543,21 @@ def extract_game_preferences(message):
 # API Chat
 @app.post("/api/chat")
 def gaming_assistant(chat: ChatMessage):
+    try:
+        return generate_chat_reply(chat)
+
+    except HTTPException:
+        raise
+
+    except Exception:  # noqa: BLE001
+        raise HTTPException(
+            status_code=500,
+            detail="Database or server error while processing chat.",
+        )
+
+
+# Generate the gaming assistant response
+def generate_chat_reply(chat: ChatMessage):
     user_message = chat.message.strip()
     message_lower = user_message.lower()
 
@@ -658,15 +784,31 @@ def gaming_assistant(chat: ChatMessage):
     return {"reply": reply}
 
 
-# api chat history
+# Get chat history from PostgreSQL
 @app.get("/api/chat-history")
 def get_chat_history():
-    profile = fetch_player_profile()
-    username = profile["username"] if profile else "Guest"
+    try:
+        profile = fetch_player_profile()
+        username = profile["username"] if profile else "Guest"
 
-    history = fetch_chat_history(username)
+        history = fetch_chat_history(username)
 
-    return history
+        if history is None:
+            raise HTTPException(
+                status_code=500,
+                detail="Unable to retrieve chat history.",
+            )
+
+        return history
+
+    except HTTPException:
+        raise
+
+    except Exception:  # noqa: BLE001
+        raise HTTPException(
+            status_code=500,
+            detail="Database error while retrieving chat history.",
+        )
 
 
 # Machine Learning recommendation engine
@@ -793,8 +935,28 @@ def ml_recommend_games(preferences: PlayerPreferences):
     return recommendations
 
 
+# Get recommendation history from PostgreSQL
 @app.get("/api/recommendation-history")
 def get_recommendation_history():
-    history = fetch_recommendation_history()
+    try:
+        history = fetch_recommendation_history()
 
-    return {"total_requests": len(history), "history": history}
+        if history is None:
+            raise HTTPException(
+                status_code=500,
+                detail="Unable to retrieve recommendation history.",
+            )
+
+        return {
+            "total_requests": len(history),
+            "history": history,
+        }
+
+    except HTTPException:
+        raise
+
+    except Exception:  # noqa: BLE001
+        raise HTTPException(
+            status_code=500,
+            detail="Database error while retrieving recommendation history.",
+        )

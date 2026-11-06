@@ -17,7 +17,7 @@ function Leaderboard() {
 
         const data = await response.json();
         setPlayers(data);
-      } catch (err) {
+      } catch {
         setError("Could not connect to the leaderboard.");
       } finally {
         setLoading(false);

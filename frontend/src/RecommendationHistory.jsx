@@ -5,19 +5,52 @@ function RecommendationHistory() {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  async function loadHistory() {
+  // Fetch recommendation history from the backend
+  async function fetchHistory() {
+    const response = await fetch(
+      "http://127.0.0.1:8000/api/recommendation-history",
+    );
+
+    if (!response.ok) {
+      throw new Error("Could not load history");
+    }
+
+    return response.json();
+  }
+
+  // Load history when the component first appears
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadInitialHistory() {
+      try {
+        const data = await fetchHistory();
+
+        if (!cancelled) {
+          setHistory(data.history || []);
+        }
+      } catch (error) {
+        console.error("History error:", error);
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadInitialHistory();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Refresh history when the button is clicked
+  async function handleRefresh() {
     setLoading(true);
 
     try {
-      const response = await fetch(
-        "http://127.0.0.1:8000/api/recommendation-history",
-      );
-
-      if (!response.ok) {
-        throw new Error("Could not load history");
-      }
-
-      const data = await response.json();
+      const data = await fetchHistory();
       setHistory(data.history || []);
     } catch (error) {
       console.error("History error:", error);
@@ -26,10 +59,6 @@ function RecommendationHistory() {
     }
   }
 
-  useEffect(() => {
-    loadHistory();
-  }, []);
-
   return (
     <section className="history-section">
       <div className="history-heading">
@@ -37,7 +66,7 @@ function RecommendationHistory() {
         <h2>Recommendation History</h2>
         <p>Explore your previous AI game recommendations.</p>
 
-        <button onClick={loadHistory} disabled={loading}>
+        <button onClick={handleRefresh} disabled={loading}>
           {loading ? "Loading..." : "Refresh History"}
         </button>
       </div>
