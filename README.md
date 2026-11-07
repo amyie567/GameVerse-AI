@@ -1,16 +1,24 @@
 ﻿# 🎮 GameVerse AI
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
+  <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" />
+  <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" />
+</p>
+
+<p align="center">
+  <a href="https://game-verse-ai.vercel.app/">
+    <img src="https://img.shields.io/badge/Live_Demo-Visit_GameVerse_AI-8A2BE2?style=for-the-badge" />
+  </a>
+  <a href="https://github.com/amyie567/GameVerse-AI">
+    <img src="https://img.shields.io/badge/GitHub-View_Repository-181717?style=for-the-badge&logo=github" />
+  </a>
+</p>
+
 ### AI-Powered Game Recommendation Platform
 
-\[!\[Live Demo](https://img.shields.io/badge/Live-Demo-purple)](https://game-verse-ai.vercel.app/)
-
-\[!\[React](https://img.shields.io/badge/Frontend-React-blue)](https://react.dev/)
-
-\[!\[FastAPI](https://img.shields.io/badge/Backend-FastAPI-green)](https://fastapi.tiangolo.com/)
-
-\[!\[PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-blue)](https://www.postgresql.org/)
-
-\*\*Live Website:\*\* https://game-verse-ai.vercel.app/
+**Live Website:** https://game-verse-ai.vercel.app/
 
 ## 📌 About
 
