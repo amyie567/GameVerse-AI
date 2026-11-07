@@ -1,10 +1,6 @@
-\# 🎮 GameVerse AI
+﻿# 🎮 GameVerse AI
 
-
-
-\### AI-Powered Game Recommendation Platform
-
-
+### AI-Powered Game Recommendation Platform
 
 \[!\[Live Demo](https://img.shields.io/badge/Live-Demo-purple)](https://game-verse-ai.vercel.app/)
 
@@ -14,31 +10,17 @@
 
 \[!\[PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-blue)](https://www.postgresql.org/)
 
-
-
 \*\*Live Website:\*\* https://game-verse-ai.vercel.app/
 
-
-
-\## 📌 About
-
-
+## 📌 About
 
 GameVerse AI is a full-stack gaming platform that helps players discover games based on their interests and preferences.
 
-
-
 It uses a hybrid recommendation engine combining machine learning techniques and preference-based scoring to provide personalized game suggestions.
-
-
 
 The platform also includes an AI chat assistant, player profiles, achievements, leaderboards, and interactive mini-games.
 
-
-
-\## ✨ Features
-
-
+## ✨ Features
 
 \- 🤖 Hybrid AI game recommendation system
 
@@ -62,11 +44,7 @@ The platform also includes an AI chat assistant, player profiles, achievements, 
 
 \- 🖼️ Cinematic artwork for eight games
 
-
-
-\## 🛠️ Technology Stack
-
-
+## 🛠️ Technology Stack
 
 | Category | Technology |
 
@@ -92,19 +70,11 @@ The platform also includes an AI chat assistant, player profiles, achievements, 
 
 | Backend Hosting | Render |
 
-
-
-\## 🧠 AI Recommendation Engine
-
-
+## 🧠 AI Recommendation Engine
 
 GameVerse AI uses a hybrid recommendation algorithm.
 
-
-
 \*\*How it works:\*\*
-
-
 
 1\. TF-IDF converts game information into numerical vectors.
 
@@ -114,25 +84,15 @@ GameVerse AI uses a hybrid recommendation algorithm.
 
 4\. Both scores are combined to rank the recommended games.
 
-
-
 \*\*Hybrid scoring:\*\*
-
-
 
 \- 60% content similarity
 
 \- 40% preference matching
 
-
-
 This approach combines content-based similarity with player preference matching.
 
-
-
-\## 🎮 Game Collection
-
-
+## 🎮 Game Collection
 
 | Game | Genre |
 
@@ -154,11 +114,7 @@ This approach combines content-based similarity with player preference matching.
 
 | Kingdom Tactics | Strategy |
 
-
-
-\## 🏗️ Project Structure
-
-
+## 🏗️ Project Structure
 
 ```text
 
@@ -200,15 +156,9 @@ GameVerse-AI/
 
 ```
 
+## 💻 Run Locally
 
-
-\## 💻 Run Locally
-
-
-
-\### 1. Clone the repository
-
-
+### 1. Clone the repository
 
 ```bash
 
@@ -218,11 +168,7 @@ cd GameVerse-AI
 
 ```
 
-
-
-\### 2. Backend setup
-
-
+### 2. Backend setup
 
 ```powershell
 
@@ -236,15 +182,9 @@ pip install -r requirements.txt
 
 ```
 
-
-
 Configure the required database connection and environment variables. Never commit passwords or API secrets.
 
-
-
 Start the backend:
-
-
 
 ```powershell
 
@@ -252,23 +192,13 @@ python -m uvicorn main:app --reload
 
 ```
 
-
-
 Backend: http://127.0.0.1:8000
-
-
 
 API documentation: http://127.0.0.1:8000/docs
 
-
-
-\### 3. Frontend setup
-
-
+### 3. Frontend setup
 
 Open another terminal:
-
-
 
 ```powershell
 
@@ -280,15 +210,9 @@ npm run dev
 
 ```
 
-
-
 Open the local URL displayed by Vite.
 
-
-
-\## ☁️ Deployment
-
-
+## ☁️ Deployment
 
 | Service | Platform |
 
@@ -300,11 +224,7 @@ Open the local URL displayed by Vite.
 
 | PostgreSQL Database | Neon |
 
-
-
-\## 🎯 What This Project Demonstrates
-
-
+## 🎯 What This Project Demonstrates
 
 \- Full-stack web application development
 
@@ -324,19 +244,16 @@ Open the local URL displayed by Vite.
 
 \- Responsive user interface development
 
-
-
-\## 👨‍💻 Author
-
-
+## 👨‍💻 Author
 
 Built as a hands-on portfolio project focused on \*\*AI Engineering and Full Stack Development\*\*.
 
-
-
 \---
-
-
 
 ⭐ If you find GameVerse AI interesting, consider starring the repository!
 
+## Project Screenshots
+
+### Explore Games
+
+![GameVerse AI - Explore Games](screenshots/explore-games.png)
