@@ -257,3 +257,73 @@ Built as a hands-on portfolio project focused on \*\*AI Engineering and Full Sta
 ### Explore Games
 
 ![GameVerse AI - Explore Games](screenshots/explore-games.png)
+
+## 🏗️ System Architecture
+
+GameVerse AI uses a full-stack architecture connecting a React frontend, FastAPI backend, hybrid AI recommendation engine, and PostgreSQL database.
+
+```mermaid
+flowchart TD
+    USER["🎮 Player / User"]
+
+    subgraph FRONTEND["Frontend - Vercel"]
+        REACT["React + Vite"]
+        UI["Game Library and Player Profile"]
+        CHATUI["AI Chat Assistant"]
+        GAMES["Mini-Games and Leaderboard"]
+    end
+
+    subgraph BACKEND["Backend - Render"]
+        API["FastAPI REST API"]
+        REC["Hybrid AI Recommendation Engine"]
+        TFIDF["TF-IDF + Cosine Similarity"]
+        PREF["Player Preference Scoring"]
+        CHAT["Chat Assistant Logic"]
+        SERVICES["Profile and Achievement Services"]
+    end
+
+    subgraph DATABASE["Database - Neon"]
+        PG[("PostgreSQL")]
+        HISTORY["Recommendation and Chat History"]
+        PLAYER["Player Profiles and Achievements"]
+        LEADER["Leaderboard and Game Points"]
+    end
+
+    USER --> REACT
+    REACT --> UI
+    REACT --> CHATUI
+    REACT --> GAMES
+
+    UI --> API
+    CHATUI --> API
+    GAMES --> API
+
+    API --> REC
+    API --> CHAT
+    API --> SERVICES
+
+    REC --> TFIDF
+    REC --> PREF
+
+    REC --> PG
+    CHAT --> PG
+    SERVICES --> PG
+
+    PG --> HISTORY
+    PG --> PLAYER
+    PG --> LEADER
+
+    API --> REACT
+```
+
+### Architecture Components
+
+| Component        | Technology                 |
+| ---------------- | -------------------------- |
+| Frontend         | React + Vite               |
+| Backend          | Python + FastAPI           |
+| AI Engine        | TF-IDF + Cosine Similarity |
+| Database         | PostgreSQL                 |
+| Database Hosting | Neon                       |
+| Backend Hosting  | Render                     |
+| Frontend Hosting | Vercel                     |
