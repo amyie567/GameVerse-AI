@@ -7,7 +7,7 @@ from psycopg.types.json import Jsonb
 # Load environment variables from .env
 load_dotenv()
 
-# PostgreSQL configuration
+# Local PostgreSQL configuration
 DATABASE_CONFIG = {
     "dbname": os.getenv("DB_NAME"),
     "user": os.getenv("DB_USER"),
@@ -18,6 +18,13 @@ DATABASE_CONFIG = {
 
 
 def get_db_connection():
+    # Use Neon PostgreSQL when DATABASE_URL is available.
+    database_url = os.getenv("DATABASE_URL")
+
+    if database_url:
+        return psycopg.connect(database_url, sslmode="require")
+
+    # Otherwise, use local PostgreSQL.
     return psycopg.connect(**DATABASE_CONFIG)
 
 
