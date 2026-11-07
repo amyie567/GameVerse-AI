@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./Leaderboard.css";
+import API from "./api";
 
 function Leaderboard() {
   const [players, setPlayers] = useState([]);
@@ -9,7 +10,7 @@ function Leaderboard() {
   useEffect(() => {
     async function loadLeaderboard() {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/leaderboard");
+        const response = await fetch(`${API}/api/leaderboard`);
 
         if (!response.ok) {
           throw new Error("Unable to load leaderboard");

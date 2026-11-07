@@ -1,3 +1,4 @@
+import os
 import re
 
 from fastapi import FastAPI, HTTPException
@@ -28,14 +29,21 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# Allow our React frontend to communicate with Python
+# Allow local and deployed React frontends
+frontend_url = os.getenv("FRONTEND_URL", "")
+
+allowed_origins = [
+    "http://localhost:5173",
+    "http://localhost:5175",
+    "http://localhost:4173",
+]
+
+if frontend_url:
+    allowed_origins.append(frontend_url.rstrip("/"))
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://localhost:5175",
-        "http://localhost:4173",
-    ],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

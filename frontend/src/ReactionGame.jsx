@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import "./ReactionGame.css";
+import API from "./api";
 
 function ReactionGame() {
   const [status, setStatus] = useState("waiting");
@@ -53,7 +54,7 @@ function ReactionGame() {
       const earnedPoints =
         time < 250 ? 100 : time < 400 ? 75 : time < 600 ? 50 : 25;
 
-      fetch("http://127.0.0.1:8000/api/profile/mini-game-points", {
+      fetch(`${API}/api/profile/mini-game-points`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

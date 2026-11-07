@@ -6,8 +6,7 @@ import MemoryGame from "./MemoryGame";
 import { useEffect, useState } from "react";
 import "./App.css";
 import PlayerProfile from "./PlayerProfile";
-
-const API = "http://127.0.0.1:8000";
+import API from "./api";
 
 function App() {
   const [games, setGames] = useState([]);

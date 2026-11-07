@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import "./PlayerProfile.css";
-
-const API = "http://127.0.0.1:8000";
+import API from "./api";
 
 function PlayerProfile() {
   const [profile, setProfile] = useState(null);

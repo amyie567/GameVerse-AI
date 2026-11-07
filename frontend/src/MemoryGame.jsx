@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import "./MemoryGame.css";
+import API from "./api";
 
 const SYMBOLS = ["🎮", "🚀", "⚡", "👾", "🏆", "🎯", "🔥", "💎"];
 
@@ -43,7 +44,7 @@ function MemoryGame() {
 
     pointsAwardedRef.current = true;
 
-    fetch("http://127.0.0.1:8000/api/profile/mini-game-points", {
+    fetch(`${API}/api/profile/mini-game-points`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

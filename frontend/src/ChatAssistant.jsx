@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "./ChatAssistant.css";
+import API from "./api";
 
 function ChatAssistant() {
   const [message, setMessage] = useState("");
@@ -10,7 +11,7 @@ function ChatAssistant() {
   useEffect(() => {
     async function loadChatHistory() {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/chat-history");
+        const response = await fetch(`${API}/api/chat-history`);
 
         if (!response.ok) {
           throw new Error("Failed to load chat history");
@@ -64,7 +65,7 @@ function ChatAssistant() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/chat", {
+      const response = await fetch(`${API}/api/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

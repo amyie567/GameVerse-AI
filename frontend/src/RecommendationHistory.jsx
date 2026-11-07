@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./RecommendationHistory.css";
+import API from "./api";
 
 function RecommendationHistory() {
   const [history, setHistory] = useState([]);
@@ -7,9 +8,7 @@ function RecommendationHistory() {
 
   // Fetch recommendation history from the backend
   async function fetchHistory() {
-    const response = await fetch(
-      "http://127.0.0.1:8000/api/recommendation-history",
-    );
+    const response = await fetch(`${API}/api/recommendation-history`);
 
     if (!response.ok) {
       throw new Error("Could not load history");
