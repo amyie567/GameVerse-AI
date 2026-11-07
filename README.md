@@ -100,6 +100,43 @@ GameVerse AI uses a hybrid recommendation algorithm.
 
 This approach combines content-based similarity with player preference matching.
 
+## 🚀 Key Technical Highlights
+
+### 1. Hybrid AI Recommendation System
+
+- Combines TF-IDF vectorization and cosine similarity.
+- Uses a hybrid scoring approach: 60% content similarity and 40% player preference matching.
+- Generates personalized game recommendations.
+- Provides explanations for recommended games.
+
+### 2. REST API Development
+
+- Built backend services using Python and FastAPI.
+- Created RESTful endpoints for games, recommendations, profiles, and chat.
+- Integrated frontend and backend using HTTP requests.
+- Configured CORS for frontend-backend communication.
+
+### 3. Database Engineering
+
+- Integrated PostgreSQL for persistent data storage.
+- Stores player profiles, achievements, and game points.
+- Maintains recommendation history and chat conversations.
+- Uses Neon for cloud database hosting.
+
+### 4. Interactive Frontend
+
+- Developed a responsive interface using React and Vite.
+- Implemented game search and category filtering.
+- Built interactive Memory Match and Reaction Time mini-games.
+- Added player profiles and leaderboard features.
+
+### 5. Deployment and Development Practices
+
+- Deployed the frontend using Vercel.
+- Deployed the backend using Render.
+- Used Git and GitHub for version control.
+- Structured the application into reusable frontend and backend modules.
+
 ## 🎮 Game Collection
 
 | Game | Genre |
