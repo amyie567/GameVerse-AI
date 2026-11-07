@@ -257,6 +257,23 @@ npm run dev
 
 Open the local URL displayed by Vite.
 
+## 🧪 Testing & Quality Assurance
+
+### Automated Testing
+
+| Area      | Framework |         Result |
+| --------- | --------- | -------------: |
+| Backend   | pytest    |     105 passed |
+| Frontend  | Vitest    |      23 passed |
+| **Total** |           | **128 passed** |
+
+### Code Quality
+
+- Python linting and code checks with Ruff.
+- Production frontend build with Vite.
+- Automated backend and frontend test suites.
+- Verified successful production build.
+
 ## ☁️ Deployment
 
 | Service | Platform |
